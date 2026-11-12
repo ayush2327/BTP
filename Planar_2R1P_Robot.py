@@ -123,52 +123,52 @@ print(f' • Total Division Steps               : {stats["div_steps"]}')
 print(f' • Terms Moved to Remainder           : {stats["rem_terms"]}')
 print(f' • New Generators (terms, degree)     : {gen_sizes}')
 
-print('\n' + '=' * 65)
-print('2. COMPUTED REDUCED GRÖBNER BASIS (' + ORDER.upper() + ' ORDERING)')
-print('=' * 65)
-for idx, poly in enumerate(G_reduced, 1):
-    print(f' g_{idx}: {poly} = 0')
+# print('\n' + '=' * 65)
+# print('2. COMPUTED REDUCED GRÖBNER BASIS (' + ORDER.upper() + ' ORDERING)')
+# print('=' * 65)
+# for idx, poly in enumerate(G_reduced, 1):
+#     print(f' g_{idx}: {poly} = 0')
 
-print('\n' + '=' * 65)
-print('3. KINEMATIC SOLUTION EXTRACTION & PHYSICAL FILTERING')
-print('=' * 65)
+# print('\n' + '=' * 65)
+# print('3. KINEMATIC SOLUTION EXTRACTION & PHYSICAL FILTERING')
+# print('=' * 65)
 
-# Solve the system directly from the Gröbner basis (no hardcoded values)
-solutions = sp.solve(list(G_reduced), gens, dict=True)
+# # Solve the system directly from the Gröbner basis (no hardcoded values)
+# solutions = sp.solve(list(G_reduced), gens, dict=True)
 
-# Sort by p so the output order is stable across monomial orderings
-solutions.sort(key=lambda s: float(sp.re(sp.N(s.get(p, 0)))))
+# # Sort by p so the output order is stable across monomial orderings
+# solutions.sort(key=lambda s: float(sp.re(sp.N(s.get(p, 0)))))
 
-print(f' Solutions found: {len(solutions)}\n')
+# print(f' Solutions found: {len(solutions)}\n')
 
-for idx, sol in enumerate(solutions, 1):
-    # Make sure every variable was determined (zero-dimensional system)
-    if not all(v in sol for v in gens):
-        print(f'Solution {idx}: not fully determined -> {sol}\n')
-        continue
+# for idx, sol in enumerate(solutions, 1):
+#     # Make sure every variable was determined (zero-dimensional system)
+#     if not all(v in sol for v in gens):
+#         print(f'Solution {idx}: not fully determined -> {sol}\n')
+#         continue
 
-    vals = {v: sp.N(sol[v]) for v in gens}
+#     vals = {v: sp.N(sol[v]) for v in gens}
 
-    # Reject complex solutions
-    if any(abs(sp.im(x)) > 1e-9 for x in vals.values()):
-        print(f'Solution {idx}: complex -> REJECTED\n')
-        continue
+#     # Reject complex solutions
+#     if any(abs(sp.im(x)) > 1e-9 for x in vals.values()):
+#         print(f'Solution {idx}: complex -> REJECTED\n')
+#         continue
 
-    c1_val, s1_val = float(sp.re(vals[c1])), float(sp.re(vals[s1]))
-    c2_val, s2_val = float(sp.re(vals[c2])), float(sp.re(vals[s2]))
-    p_val = float(sp.re(vals[p]))
+#     c1_val, s1_val = float(sp.re(vals[c1])), float(sp.re(vals[s1]))
+#     c2_val, s2_val = float(sp.re(vals[c2])), float(sp.re(vals[s2]))
+#     p_val = float(sp.re(vals[p]))
 
-    print(f'Solution {idx}: p = {p_val:.6f}')
+#     print(f'Solution {idx}: p = {p_val:.6f}')
 
-    # Physical filter on the prismatic joint
-    if P_MIN <= p_val <= P_MAX:
-        theta1_deg = math.degrees(math.atan2(s1_val, c1_val))
-        theta2_deg = math.degrees(math.atan2(s2_val, c2_val))
+#     # Physical filter on the prismatic joint
+#     if P_MIN <= p_val <= P_MAX:
+#         theta1_deg = math.degrees(math.atan2(s1_val, c1_val))
+#         theta2_deg = math.degrees(math.atan2(s2_val, c2_val))
 
-        print(f' -> VALID: Satisfies physical limits ({P_MIN} <= p <= {P_MAX})')
-        print(f' c1 = {c1_val:.4f}, s1 = {s1_val:.4f}, c2 = {c2_val:.4f}, s2 = {s2_val:.4f}')
-        print(f' • Revolute Joint 1 (theta1) = {theta1_deg:.2f}°')
-        print(f' • Revolute Joint 2 (theta2) = {theta2_deg:.2f}°')
-        print(f' • Prismatic Extension (p) = {p_val:.4f} units\n')
-    else:
-        print(f' -> REJECTED: Outside physical slider range [{P_MIN} <= p <= {P_MAX}]\n')
+#         print(f' -> VALID: Satisfies physical limits ({P_MIN} <= p <= {P_MAX})')
+#         print(f' c1 = {c1_val:.4f}, s1 = {s1_val:.4f}, c2 = {c2_val:.4f}, s2 = {s2_val:.4f}')
+#         print(f' • Revolute Joint 1 (theta1) = {theta1_deg:.2f}°')
+#         print(f' • Revolute Joint 2 (theta2) = {theta2_deg:.2f}°')
+#         print(f' • Prismatic Extension (p) = {p_val:.4f} units\n')
+#     else:
+#         print(f' -> REJECTED: Outside physical slider range [{P_MIN} <= p <= {P_MAX}]\n')
